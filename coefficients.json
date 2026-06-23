@@ -1,0 +1,61 @@
+{
+  "loudness_db": {
+    "lo": -30,
+    "hi": -6
+  },
+  "centroid_hz": {
+    "lo": 500,
+    "hi": 4000
+  },
+  "onset_rate": {
+    "lo": 0.5,
+    "hi": 6
+  },
+  "dynamic_range_db": {
+    "lo": 3,
+    "hi": 18
+  },
+  "zcr": {
+    "lo": 0.03,
+    "hi": 0.2
+  },
+  "tempo_center": 118,
+  "tempo_width": 45,
+  "energy": {
+    "loudness": 0.5,
+    "centroid": 0.25,
+    "onset": 0.2,
+    "flatness": 0.05
+  },
+  "danceability": {
+    "beat": 0.5,
+    "tempo": 0.3,
+    "onset": 0.2
+  },
+  "valence": {
+    "mode": 0.35,
+    "brightness": 0.25,
+    "tempo": 0.2,
+    "energy": 0.2
+  },
+  "acousticness": {
+    "harmonic": 0.4,
+    "low_brightness": 0.3,
+    "low_energy": 0.2,
+    "dynamic_range": 0.1
+  },
+  "speechiness": {
+    "zcr": 0.5,
+    "flatness": 0.2,
+    "onset": 0.3
+  },
+  "instrumentalness": {
+    "not_speech": 0.6,
+    "harmonic": 0.4
+  },
+  "liveness": {
+    "flatness": 0.5,
+    "low_dynamic": 0.5,
+    "scale": 0.6
+  }
+}

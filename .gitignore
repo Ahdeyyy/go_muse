@@ -1,0 +1,14 @@
+# build output
+/gomuse
+/gomuse.exe
+/cmd/gomuse/gomuse
+/cmd/gomuse/gomuse.exe
+
+# generated data
+*.db
+*.db-wal
+*.db-shm
+*.csv
+
+# coefficients.json is regenerated with defaults on first run; keep your tuned
+# copy if you want, otherwise it is safe to delete.
