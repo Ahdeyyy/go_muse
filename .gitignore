@@ -3,12 +3,23 @@
 /gomuse.exe
 /cmd/gomuse/gomuse
 /cmd/gomuse/gomuse.exe
+/gomuse-web
+/gomuse-web.exe
+/cmd/web/web
+/cmd/web/web.exe
+
+# frontend
+/web/node_modules
+# The built SPA in internal/webapi/dist is committed so `go build ./cmd/web`
+# produces a self-contained binary without a Node toolchain. Regenerate it with
+# `npm --prefix web run build`.
 
 # generated data
 *.db
 *.db-wal
 *.db-shm
 *.csv
+*.pxpl
 
 # coefficients.json is regenerated with defaults on first run; keep your tuned
 # copy if you want, otherwise it is safe to delete.

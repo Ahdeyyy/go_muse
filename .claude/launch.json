@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "./gomuse-web.exe",
+      "runtimeArgs": ["-db", "gomuse.db", "-open=false", "-addr", "127.0.0.1:8765"],
+      "port": 8765
+    }
+  ]
+}

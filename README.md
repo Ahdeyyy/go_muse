@@ -91,10 +91,66 @@ strength, musical key + mode + confidence, harmonic ratio, 13 MFCC means.
 **Perceptual (heuristic):** danceability, energy, valence, acousticness,
 instrumentalness, liveness, speechiness (+ tempo, loudness passthrough).
 
+## Web dashboard & playlist generator (`cmd/web`)
+
+A single self-contained binary that serves a **Svelte 5** dashboard (embedded
+via `go:embed`) backed by a small JSON API. It visualizes your library with
+[FlareCharts](https://flarecharts.gitbook.io/docs) and generates `.m3u`
+playlists from a recommendation engine.
+
+```
+analysis (gomuse.db)  ─┐
+                       ├─► join on title+artist ─► charts + recommender ─► .m3u
+PixelPlayer .pxpl  ────┘   (engagement: plays, favorites, recency)
+```
+
+- **Two data sources, joined.** `gomuse.db` supplies audio attributes (energy,
+  valence, danceability, genre, year) and the on-disk path each `.m3u` entry
+  needs. The uploaded **`.pxpl`** backup supplies *listening* data — how often
+  each song was played, favorites, and per-play timestamps. They are matched on
+  a normalized title+artist key (the backup's `songId` is opaque, so titles are
+  recovered from the lyrics module's `[ti:]/[ar:]` tags).
+- **Charts (datapoints chosen for you):** top genres (donut), listening over
+  time (area), audio-fingerprint averages, familiarity spread by play count,
+  plays by hour of day, energy distribution, top artists & most-played tracks.
+- **Playlist inputs:** mood, activity, era, energy, **discovery** (familiar ↔
+  new, driven by play count), min/max songs, and filters (genres, artists,
+  favorites). The recommender blends mood/activity presets + the energy/era
+  inputs into a target vector, scores every track by weighted similarity plus a
+  discovery (familiarity) term, and exports the result as extended `.m3u`.
+
+### Build & run
+
+```bash
+# 1) build the SPA into internal/webapi/dist (one-time / after UI changes)
+npm --prefix web install
+npm --prefix web run build
+
+# 2) build & run the embedded binary
+go build -o gomuse-web ./cmd/web
+./gomuse-web -db gomuse.db          # opens http://127.0.0.1:8765
+```
+
+| Flag | Default | Meaning |
+|------|---------|---------|
+| `-db` | `gomuse.db` | gomuse analysis database (audio attributes + paths) |
+| `-addr` | `127.0.0.1:8765` | listen address |
+| `-open` | `true` | open the dashboard in a browser on start |
+
+Then click **Upload .pxpl** to layer in your listening history. For local
+development, run the Go server and `npm --prefix web run dev` (Vite proxies
+`/api` to `:8765`).
+
+> `tools/seedtest` builds a synthetic `gomuse.db` from a `.pxpl` (real
+> titles/artists, fabricated features) so you can try the dashboard without
+> running the full audio analysis: `go run ./tools/seedtest -in backup.pxpl`.
+
 ## Project layout
 
 ```
-cmd/gomuse        CLI entrypoint
+cmd/gomuse        CLI entrypoint (analyzer)
+cmd/web           embedded web dashboard + JSON API
+web/              Svelte 5 + Vite SPA (FlareCharts)
 internal/model    shared structs
 internal/scan     directory walk / format filter
 internal/meta     tag metadata (dhowden/tag)
@@ -103,4 +159,9 @@ internal/audio    DSP feature extraction (gonum FFT)
 internal/score    heuristic scoring + coefficients.json
 internal/store    SQLite (modernc) + CSV + reports
 internal/pipeline worker-pool orchestration + caching
+internal/pxpl     PixelPlayer .pxpl backup parser
+internal/library  gomuse.db ↔ .pxpl join + dashboard stats
+internal/recommend playlist recommendation engine
+internal/m3u      extended .m3u writer
+internal/webapi   HTTP handlers + embedded SPA
 ```
